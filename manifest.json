@@ -1,0 +1,19 @@
+{
+  "name": "Conjuguemos Automator",
+  "version": "1.1",
+  "description": "Automatically complete Conjuguemos.",
+  "manifest_version": 3,
+  "host_permissions": ["https://conjuguemos.com/verb/homework/*"],
+  "action": {
+    "default_icon": "coqui.png",
+    "default_popup": "popup.html",
+    "default_title": "Conjuguemos Automator"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://conjuguemos.com/verb/homework/*"],
+      "js": ["contentScript.js"],
+      "type": "module"
+    }
+  ]
+}

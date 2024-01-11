@@ -1,0 +1,72 @@
+@font-face {
+    font-family: 'Rubik';
+    font-style: bold;
+    font-weight: 700;
+    font-display: swap;
+    src: url(Rubik-700.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+    font-family: 'Rubik';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(Rubik-400.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+  
+.Container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-items: center;
+    width: 180px;
+    min-height: 90px;
+    padding: 10px 20px;
+}
+
+.Input {
+    width: auto; 
+    margin: auto;
+    padding: 2.5px 5px;
+    font: normal 14px/14px "Rubik", "sans-serif";
+    border-radius: 5px;
+    border: 2.5px solid #C2CFE0;
+}
+
+.Button {
+    background: #05BD65; 
+    box-shadow: inset 0px -4px 0px rgba(0, 0, 0, 0.12); 
+    text-transform: none;
+    height: 53px;
+    padding: 0 18px;
+    color: #FAFAFA;
+    border-radius: 11px;
+    font: bold 16px/16px 'Rubik', sans-serif;
+    cursor: pointer;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    margin: 0;
+    border: 0;
+    outline: none;
+    vertical-align: baseline;
+    margin-top: 15px;
+}
+
+.Warning {
+    width: 100%; 
+    justify-items: left;
+    margin-top: 5px;
+    margin-left: 10px;
+    display: inline;
+    font: normal 12px/12px 'Rubik', sans-serif;
+    color: #F7685B;;
+}
+
+.Rubik {
+    font-family: "Rubik";
+}
