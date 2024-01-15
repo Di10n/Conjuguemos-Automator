@@ -12,7 +12,24 @@
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="Exclamation">
           <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14ZM8 4a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd" />
         </svg>            
-        Large numbers of questions may freeze your browser</div>
+        Large numbers of questions may freeze your browser
+      </div>
+      <div class="CheckContainer">
+        <input type="checkbox" id="SaveScore" class="Checkbox"></input>
+        <label for="SaveScore" id="SaveLabel" class="CheckLabel">Save score</label>
+      </div> 
+      <div id="timerbox" class="timerbox">
+        Time:  
+        <input type="number" min="0" max="59" id="min" class="Input2 Rubik" placeholder="min"></input>
+        :
+        <input type="number" min="0" max="59" id="sec" class="Input2 Rubik" placeholder="sec"></input>
+      </div> 
+      <div id="timewarning" class="Warning Rubik">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="Exclamation">
+          <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14ZM8 4a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd" />
+        </svg>            
+        Invalid time (max 59:59)
+      </div>
       <button id="start-btn" class="Button Rubik">Start</button>
     </div>
   </body>
