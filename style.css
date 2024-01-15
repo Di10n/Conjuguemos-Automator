@@ -57,6 +57,13 @@
     margin-top: 15px;
 }
 
+.Exclamation {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    translate: 0px 1.5px;
+}
+
 .Warning {
     width: 100%; 
     justify-items: left;

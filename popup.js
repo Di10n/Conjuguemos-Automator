@@ -13,9 +13,9 @@ function clickHandler() {
 function inputHandler() {
   let warning = document.getElementById("warning");
   let value = document.getElementById("number").value;
-  if (value > 1000) {
+  if (value > 999) {
     warning.style.display = "inline";
-  } else if (value <= 1000) {
+  } else if (value <= 999) {
     warning.style.display = "none";
   }
 }
