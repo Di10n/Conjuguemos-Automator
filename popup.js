@@ -1,13 +1,120 @@
+let timewarning = [0, 0, 0];
+let nogo = 0;
+let inProgress = 0;
+let intervalID = 0;
+
+function startTimer(tohide, timerbox, minbox, secbox, min, sec) {
+  nogo = 1;
+  checkgrey();
+  for (e of tohide) {
+    e.style.opacity = "50%";
+    e.style.zIndex = "-1";
+  }
+  timerbox.style.zIndex = "-1";
+  minbox.disabled = "true";
+  secbox.disabled = "true";
+  minbox.value = min;
+  secbox.value = sec;
+  inProgress = 1;
+}
+
+function endTimer() {
+  let tohide = [
+    document.getElementById("number"),
+    document.getElementById("warning"),
+  ];
+  let minbox = document.getElementById("min");
+  let secbox = document.getElementById("sec");
+  nogo = 0;
+  checkgrey();
+  for (e of tohide) {
+    e.style.opacity = "100%";
+    e.style.zIndex = "0";
+  }
+  minbox.removeAttribute("disabled");
+  secbox.removeAttribute("disabled");
+  timerbox.style.zIndex = "0";
+  inProgress = 0;
+}
+
+function initialize(min, sec) {
+  if (min == "") {
+    min = 0;
+  }
+  if (sec == "") {
+    sec = 0;
+  }
+  min = parseInt(min);
+  sec = parseInt(sec);
+  return [min, sec];
+}
+
+function update(min, sec, minbox, secbox) {
+  sec = sec.toString();
+  if (sec.length == 1) {
+    sec = "0" + sec;
+  }
+  minbox.value = min;
+  secbox.value = sec;
+  sec = parseInt(sec);
+  newtime = decrement(min, sec);
+  min = newtime[0];
+  sec = newtime[1];
+  return [min, sec];
+}
+
+function timer(min, sec) {
+  init = initialize(min, sec);
+  min = init[0];
+  sec = init[1];
+  let tohide = [
+    document.getElementById("number"),
+    document.getElementById("warning"),
+  ];
+  let timerbox = document.getElementById("timerbox");
+  let minbox = document.getElementById("min");
+  let secbox = document.getElementById("sec");
+  startTimer(tohide, timerbox, minbox, secbox, min, sec);
+  const interval = () => {
+    if (!min && !sec) {
+      endTimer();
+      clearInterval(intervalID);
+    }
+    newtime = update(min, sec, minbox, secbox);
+    min = newtime[0];
+    sec = newtime[1];
+  };
+  intervalID = setInterval(interval, 1000);
+  interval();
+}
+
+function decrement(min, sec) {
+  if (sec) {
+    return [min, sec - 1];
+  } else {
+    return [min - 1, 59];
+  }
+}
+
 function clickHandler() {
-  var questions = document.getElementById("number").value;
-  var inputId = "answer-input";
-  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    chrome.tabs.sendMessage(tabs[0].id, {
-      action: "insertText",
-      inputId: inputId,
-      data: questions,
+  if (!nogo) {
+    if (document.getElementById("SaveScore").checked) {
+      let min = document.getElementById("min").value;
+      let sec = document.getElementById("sec").value;
+      if (parseInt(min) || parseInt(sec)) {
+        timer(min, sec);
+      }
+    }
+    let questions = document.getElementById("number").value;
+    let inputId = "answer-input";
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      chrome.tabs.sendMessage(tabs[0].id, {
+        action: "insertText",
+        inputId: inputId,
+        data: questions,
+      });
     });
-  });
+  }
 }
 
 function inputHandler() {
@@ -21,22 +128,29 @@ function inputHandler() {
 }
 
 function clickListen() {
-  document
-    .getElementById("number")
-    .addEventListener("keydown", function (event) {
-      if (event.key === "Enter") {
-        clickHandler();
-        event.preventDefault();
-      }
-    });
+  document.getElementById("number").addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+      clickHandler();
+      event.preventDefault();
+    }
+  });
+  document.getElementById("min").addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+      clickHandler();
+      event.preventDefault();
+    }
+  });
+  document.getElementById("sec").addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+      clickHandler();
+      event.preventDefault();
+    }
+  });
 }
-
-var timewarning = [0, 0, 0];
-var inProgress = 0;
 
 function checkgrey() {
   let button = document.getElementById("start-btn");
-  if ((timewarning[0] || timewarning[1]) && timewarning[2]) {
+  if (nogo) {
     button.style.background = "#c0c0c0";
     button.style.cursor = "not-allowed"
   } else {
@@ -49,15 +163,17 @@ function checkTime() {
   let warning = document.getElementById("timewarning");
   if ((timewarning[0] || timewarning[1]) && timewarning[2]) {
     warning.style.display = "inline";
+    nogo = 1;
   } else {
     warning.style.display = "none";
+    nogo = 0;
   }
   checkgrey();
 }
 
 function checkListen() {
-  var label = document.getElementById("SaveLabel")
-  var time = document.getElementById("timerbox")
+  let label = document.getElementById("SaveLabel")
+  let time = document.getElementById("timerbox")
   document.getElementById("SaveScore").addEventListener('change', function() {
     if (this.checked) {
       label.style.color = "black";
@@ -67,6 +183,10 @@ function checkListen() {
       label.style.color = "#5f6367";
       time.style.display = "none"
       timewarning[2] = 0;
+      if (inProgress) {
+        endTimer();
+        clearInterval(intervalID);
+      }
     }
     checkTime();
   });
@@ -104,13 +224,13 @@ function restrictInput() {
 
 document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("warning").style.display = "none";
-  var button = document.getElementById("start-btn");
+  let button = document.getElementById("start-btn");
   button.addEventListener("click", clickHandler);
-  var input = document.getElementById("number");
+  let input = document.getElementById("number");
   input.addEventListener("input", inputHandler);
-  var min = document.getElementById("min");
+  let min = document.getElementById("min");
   min.addEventListener("input", minHandler);
-  var sec = document.getElementById("sec");
+  let sec = document.getElementById("sec");
   sec.addEventListener("input", secHandler);
   clickListen();
   checkListen();
