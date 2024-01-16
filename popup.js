@@ -32,6 +32,18 @@ function clickListen() {
 }
 
 var timewarning = [0, 0, 0];
+var inProgress = 0;
+
+function checkgrey() {
+  let button = document.getElementById("start-btn");
+  if ((timewarning[0] || timewarning[1]) && timewarning[2]) {
+    button.style.background = "#c0c0c0";
+    button.style.cursor = "not-allowed"
+  } else {
+    button.style.background = "#03bd65";
+    button.style.cursor = "pointer"
+  }
+}
 
 function checkTime() {
   let warning = document.getElementById("timewarning");
@@ -40,6 +52,7 @@ function checkTime() {
   } else {
     warning.style.display = "none";
   }
+  checkgrey();
 }
 
 function checkListen() {
