@@ -79,6 +79,16 @@ function secHandler() {
   checkTime();
 }
 
+function restrictInput() {
+  for (e of document.querySelectorAll("input")) {
+    e.addEventListener("keypress", function (evt) {
+      if (!["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].includes(evt.key)) {
+        evt.preventDefault();
+      }
+    });
+  }
+}
+
 document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("warning").style.display = "none";
   var button = document.getElementById("start-btn");
@@ -91,4 +101,5 @@ document.addEventListener("DOMContentLoaded", function () {
   sec.addEventListener("input", secHandler);
   clickListen();
   checkListen();
+  restrictInput();
 });
