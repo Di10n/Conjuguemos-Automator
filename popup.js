@@ -124,7 +124,12 @@ function clickHandler() {
         timer(min, sec);
       }
     }
-    let questions = document.getElementById("number").value;
+    let numbox = document.getElementById("number");
+    let questions = numbox.value
+    if (questions === "") {
+      questions = 0;
+      numbox.value = 0;
+    }
     let inputId = "answer-input";
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
       chrome.tabs.sendMessage(tabs[0].id, {

@@ -5834,9 +5834,6 @@ function insertText(input, pronoun, verb, pos) {
 chrome.runtime.onMessage.addListener(function (request) {
   if (request.action === "insertText") {
     var questions = request.data;
-    if (questions === "") {
-      questions = 1;
-    }
     for (let i = 0; i < questions; i++) {
       var input = document.getElementById(request.inputId);
       let pronoun = document.getElementById("pronoun-input").textContent;
