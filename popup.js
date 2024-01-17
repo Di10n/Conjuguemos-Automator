@@ -2,6 +2,7 @@ let timewarning = [0, 0, 0];
 let nogo = 0;
 let inProgress = 0;
 let intervalID = 0;
+let gradientID = 0;
 
 function startTimer(tohide, timerbox, minbox, secbox, min, sec) {
   nogo = 1;
@@ -63,10 +64,20 @@ function update(min, sec, minbox, secbox) {
   return [min, sec];
 }
 
+function updategradient(imin, isec, min, sec, n) {
+  let itime = (imin * 60 + isec);
+  let time = (min * 60 + sec - n/100);
+  let proportion = (1 - (time + 1) / itime) * 100;
+  button = document.getElementById("start-btn");
+  button.style.background = `linear-gradient(90deg, #03bd65 ${proportion}%, #c0c0c0 ${proportion}%)`;
+}
+
 function timer(min, sec) {
   init = initialize(min, sec);
   min = init[0];
   sec = init[1];
+  let imin = min
+  let isec = sec
   let tohide = [
     document.getElementById("number"),
     document.getElementById("warning"),
@@ -79,6 +90,7 @@ function timer(min, sec) {
     if (!min && !sec) {
       endTimer();
       clearInterval(intervalID);
+      clearInterval(gradientID);
     }
     newtime = update(min, sec, minbox, secbox);
     min = newtime[0];
@@ -86,6 +98,13 @@ function timer(min, sec) {
   };
   intervalID = setInterval(interval, 1000);
   interval();
+  let n = 0;
+  const gradient = () => {
+    updategradient(imin, isec, min, sec, n);
+    n = n%100 + 1
+  };
+  gradientID = setInterval(gradient, 10);
+  gradient();
 }
 
 function decrement(min, sec) {
@@ -186,6 +205,7 @@ function checkListen() {
       if (inProgress) {
         endTimer();
         clearInterval(intervalID);
+        clearInterval(gradientID);
       }
     }
     checkTime();
