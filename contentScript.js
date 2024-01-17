@@ -5786,9 +5786,8 @@ function getpronoun(pronoun) {
   }
   return 5;
 }
+
 function getconj(pronoun, verb) {
-  console.log(pronoun);
-  console.log(verb);
   return conj[tensenumber][verb][pronoun];
 }
 
@@ -5831,15 +5830,23 @@ function insertText(input, pronoun, verb, pos) {
   submit(input);
 }
 
+function saveScore() {
+  let saveButton = getElementByXpath("/html/body/div[1]/div[1]/div[7]/button");
+  console.log("here");
+  saveButton.click();
+}
+
 chrome.runtime.onMessage.addListener(function (request) {
-  if (request.action === "insertText") {
+  if (request.action === "start") {
     var questions = request.data;
     for (let i = 0; i < questions; i++) {
-      var input = document.getElementById(request.inputId);
+      let input = document.getElementById("answer-input");
       let pronoun = document.getElementById("pronoun-input").textContent;
       let pos = document.getElementById("tense-input").textContent;
       let verb = document.getElementById("verb-input").textContent;
       insertText(input, pronoun, verb, pos);
     }
+  } else if (request.action === "save") {
+    saveScore();
   }
 });

@@ -91,6 +91,11 @@ function timer(min, sec) {
       endTimer();
       clearInterval(intervalID);
       clearInterval(gradientID);
+      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, {
+          action: "save",
+        });
+      });
     }
     newtime = update(min, sec, minbox, secbox);
     min = newtime[0];
@@ -130,11 +135,9 @@ function clickHandler() {
       questions = 0;
       numbox.value = 0;
     }
-    let inputId = "answer-input";
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
       chrome.tabs.sendMessage(tabs[0].id, {
-        action: "insertText",
-        inputId: inputId,
+        action: "start",
         data: questions,
       });
     });
