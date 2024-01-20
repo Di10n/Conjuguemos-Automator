@@ -1,7 +1,7 @@
 function getCurrentURL() {
   return window.location.href;
 }
-urldict = {
+const urldict = {
   133: 2,
   135: 3,
   134: 4,
@@ -5802,9 +5802,7 @@ function getElementByXpath(path) {
 }
 
 function submit(input) {
-  checkbutton = getElementByXpath(
-    "/html/body/div[2]/div/div[4]/div[2]/div/div[3]/div[2]"
-  );
+  let checkbutton = getElementByXpath("/html/body/div[2]/div/div[4]/div[2]/div/div[3]/div[2]");
   checkbutton.className = "js-check-button nbtn--flat bg-success nbtn-shadow";
   const enter = new KeyboardEvent("keypress", {
     bubbles: true,
@@ -5825,20 +5823,65 @@ function insertText(input, pronoun, verb, pos) {
       pronoun = 0;
     }
   }
-  text = getconj(pronoun, verb);
+  let text = getconj(pronoun, verb);
   input.value = text;
   submit(input);
 }
 
-function saveScore() {
-  let saveButton = getElementByXpath("/html/body/div[1]/div[1]/div[7]/button");
-  console.log("here");
-  saveButton.click();
+async function saveScore() {
+  if (totalQuestions) {
+    await savewait();
+    let saveButton = getElementByXpath("/html/body/div[1]/div[1]/div[7]/button");
+    saveButton.click();
+  }
 }
 
-chrome.runtime.onMessage.addListener(function (request) {
+function savecondition() {
+  let saveButton = getElementByXpath("/html/body/div[1]/div[1]/div[7]/button");
+  return !saveButton.disabled;
+}
+
+function savewait() {
+  const poll = resolve => {
+    if(savecondition()) resolve();
+    else setTimeout(_ => poll(resolve), 10);
+  }
+  return new Promise(poll);
+}
+
+function conditionFunction() {
+  let checkbutton = getElementByXpath("/html/body/div[2]/div/div[4]/div[2]/div/div[3]/div[2]");
+  return checkbutton;
+}
+
+function waitFor() {
+  const poll = resolve => {
+    if(conditionFunction()) resolve();
+    else setTimeout(_ => poll(resolve), 10);
+  }
+  return new Promise(poll);
+}
+
+let clicked = 0;
+let totalQuestions = 0;
+
+chrome.runtime.onMessage.addListener(async function (request) {
   if (request.action === "start") {
-    var questions = request.data;
+    let questions = parseInt(request.data);
+    totalQuestions += questions;
+    let block = getElementByXpath("/html/body/x-modal[4]");
+    if (block.style.display == "flex") {
+      let timerSwitch = getElementByXpath("/html/body/x-modal[4]/div/div[2]/div[1]/div[1]/input");
+      if (timerSwitch.checked) {
+        timerSwitch.click();
+      }
+      let startButton = getElementByXpath("/html/body/x-modal[4]/div/div[2]/div[1]/div[2]/button");
+      startButton.click();
+      clicked = 1;
+      await waitFor();
+    } else {
+      clicked = 0;
+    }
     for (let i = 0; i < questions; i++) {
       let input = document.getElementById("answer-input");
       let pronoun = document.getElementById("pronoun-input").textContent;
@@ -5847,6 +5890,12 @@ chrome.runtime.onMessage.addListener(function (request) {
       insertText(input, pronoun, verb, pos);
     }
   } else if (request.action === "save") {
-    saveScore();
+    if (clicked) {
+      setTimeout(function() {
+        saveScore();
+      }, 1000);
+    } else {
+      saveScore();    
+    }
   }
 });

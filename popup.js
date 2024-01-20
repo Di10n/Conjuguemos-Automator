@@ -1,17 +1,38 @@
 let timewarning = [0, 0, 0];
 let nogo = 0;
+let badpage = 0;
 let inProgress = 0;
 let intervalID = 0;
 let gradientID = 0;
 
-function startTimer(tohide, timerbox, minbox, secbox, min, sec) {
+chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
+  let url = tabs[0].url;
+  if (!supportedUrl(url)) {
+    shutdown();
+  }
+});
+
+function supportedUrl(u) {
+  u = u.split("#")[0]
+  let urlnums = [133, 135, 134, 132, 1958161, 131, 130, 138, 139, 137, 136, 119, 116, 114, 127, 126, 125, 115, 123, 113, 1940930, 1940929, 128, 121, 129, 117, 118, 124, 122, 140, 141, 1334208, 120, 142, 2218983, 1419289, 1419288, 1484396, 1418371, 1419284, 1419285]
+  let validURLs = urlnums.map((x) => "https://conjuguemos.com/verb/homework/" + x.toString());
+  return validURLs.includes(u);
+}
+
+function shutdown() {
+  badpage = 1;
+  checkgrey();
+  let warning = document.getElementById("unsupported");
+  warning.style.display = "inline";
+}
+
+function startTimer(timerbox, minbox, secbox, min, sec) {
   nogo = 1;
   checkgrey();
-  for (e of tohide) {
-    e.style.opacity = "50%";
-    e.style.zIndex = "-1";
-  }
+  let inbox = document.getElementById("number");
+  inbox.style.zIndex = "-1";
   timerbox.style.zIndex = "-1";
+  inbox.disabled = "true";
   minbox.disabled = "true";
   secbox.disabled = "true";
   minbox.value = min;
@@ -20,20 +41,15 @@ function startTimer(tohide, timerbox, minbox, secbox, min, sec) {
 }
 
 function endTimer() {
-  let tohide = [
-    document.getElementById("number"),
-    document.getElementById("warning"),
-  ];
+  let inbox = document.getElementById("number");
   let minbox = document.getElementById("min");
   let secbox = document.getElementById("sec");
   nogo = 0;
   checkgrey();
-  for (e of tohide) {
-    e.style.opacity = "100%";
-    e.style.zIndex = "0";
-  }
+  inbox.removeAttribute("disabled");
   minbox.removeAttribute("disabled");
   secbox.removeAttribute("disabled");
+  inbox.style.zIndex = "0";
   timerbox.style.zIndex = "0";
   inProgress = 0;
 }
@@ -78,14 +94,10 @@ function timer(min, sec) {
   sec = init[1];
   let imin = min
   let isec = sec
-  let tohide = [
-    document.getElementById("number"),
-    document.getElementById("warning"),
-  ];
   let timerbox = document.getElementById("timerbox");
   let minbox = document.getElementById("min");
   let secbox = document.getElementById("sec");
-  startTimer(tohide, timerbox, minbox, secbox, min, sec);
+  startTimer(timerbox, minbox, secbox, min, sec);
   const interval = () => {
     if (!min && !sec) {
       endTimer();
@@ -121,14 +133,7 @@ function decrement(min, sec) {
 }
 
 function clickHandler() {
-  if (!nogo) {
-    if (document.getElementById("SaveScore").checked) {
-      let min = document.getElementById("min").value;
-      let sec = document.getElementById("sec").value;
-      if (parseInt(min) || parseInt(sec)) {
-        timer(min, sec);
-      }
-    }
+  if (!nogo && !badpage) {
     let numbox = document.getElementById("number");
     let questions = numbox.value
     if (questions === "") {
@@ -141,6 +146,11 @@ function clickHandler() {
         data: questions,
       });
     });
+    if (document.getElementById("SaveScore").checked) {
+      let min = document.getElementById("min").value;
+      let sec = document.getElementById("sec").value;
+      timer(min, sec);
+    }
   }
 }
 
@@ -177,7 +187,7 @@ function clickListen() {
 
 function checkgrey() {
   let button = document.getElementById("start-btn");
-  if (nogo) {
+  if (nogo || badpage) {
     button.style.background = "#c0c0c0";
     button.style.cursor = "not-allowed"
   } else {

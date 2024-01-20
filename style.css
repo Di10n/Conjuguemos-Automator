@@ -91,6 +91,14 @@
     margin-top: 5px;
 }
 
+.Orange {
+    color: #f5a02a;
+}
+
+.LargeMt {
+    margin-top: 10px;
+}
+
 .CheckContainer {
     display: inline;
     width: 100%;
