@@ -129,3 +129,21 @@
 .Rubik {
     font-family: "Rubik";
 }
+
+.inputContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.extra {
+    display: none;
+    width: 63px;
+}
+
+.separator {
+    display: none;
+    font: normal 14px/14px "Rubik", "sans-serif";
+}

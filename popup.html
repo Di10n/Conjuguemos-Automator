@@ -7,13 +7,27 @@
   </head>
   <body>
     <div class="Container">
-      <input type="number" min="0" id="number" class="Input Rubik" placeholder="Number of Questions"></input>
+      <div class="inputContainer">
+        <input type="number" min="0" id="number" class="Input Rubik" placeholder="Number of Questions"></input>
+        <div class="separator" id="separator">/</div>
+        <input type="number" min="0" id="total" class="Input Rubik extra" placeholder="Total"></input>
+      </div>
       <div id="warning" class="Warning Orange Rubik">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="Exclamation">
           <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14ZM8 4a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd" />
         </svg>            
         Large numbers of questions may freeze your browser
       </div>
+      <div id="totalwarning" class="Warning Rubik">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="Exclamation">
+          <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14ZM8 4a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd" />
+        </svg>            
+        Invalid ratio
+      </div>
+      <div id="CheckContainer" class="CheckContainer">
+        <input type="checkbox" id="getTotal" class="Checkbox"></input>
+        <label for="getTotal" id="totalLabel" class="CheckLabel">Get some wrong</label>
+      </div> 
       <div id="CheckContainer" class="CheckContainer">
         <input type="checkbox" id="SaveScore" class="Checkbox"></input>
         <label for="SaveScore" id="SaveLabel" class="CheckLabel">Save score</label>

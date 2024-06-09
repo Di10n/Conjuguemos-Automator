@@ -1,6 +1,8 @@
 let timewarning = [0, 0, 0];
+let nogos = [0, 0];
 let nogo = 0;
 let badpage = 0;
+let badnum = [0, 0];
 let inProgress = 0;
 let intervalID = 0;
 let gradientID = 0;
@@ -27,14 +29,23 @@ function shutdown() {
 }
 
 function startTimer(timerbox, minbox, secbox, min, sec) {
-  nogo = 1;
+  nogos[0] = 1;
+  nogo = (nogos[0] || nogos[1]);
   checkgrey();
   let inbox = document.getElementById("number");
+  let totalbox = document.getElementById("total");
+  let wrongCheck = document.getElementById("getTotal");
+  let wrongLabel = document.getElementById("totalLabel");
   inbox.style.zIndex = "-1";
+  totalbox.style.zIndex = "-1";
+  wrongCheck.style.zIndex = "-1";
   timerbox.style.zIndex = "-1";
   inbox.disabled = "true";
+  totalbox.disabled = "true";
+  wrongCheck.disabled = "true";
   minbox.disabled = "true";
   secbox.disabled = "true";
+  wrongLabel.style.color = "#5f6367";
   minbox.value = min;
   secbox.value = sec;
   inProgress = 1;
@@ -42,14 +53,23 @@ function startTimer(timerbox, minbox, secbox, min, sec) {
 
 function endTimer() {
   let inbox = document.getElementById("number");
+  let totalbox = document.getElementById("total");
+  let wrongCheck = document.getElementById("getTotal");
+  let wrongLabel = document.getElementById("totalLabel");
   let minbox = document.getElementById("min");
   let secbox = document.getElementById("sec");
-  nogo = 0;
+  nogos[0] = 0;
+  nogo = (nogos[0] || nogos[1]);
   checkgrey();
   inbox.removeAttribute("disabled");
+  totalbox.removeAttribute("disabled");
+  wrongCheck.removeAttribute("disabled");
   minbox.removeAttribute("disabled");
   secbox.removeAttribute("disabled");
+  wrongLabel.style.color = "black";
   inbox.style.zIndex = "0";
+  totalbox.style.zIndex = "0";
+  wrongCheck.style.zIndex = "0";
   timerbox.style.zIndex = "0";
   inProgress = 0;
 }
@@ -118,7 +138,7 @@ function timer(min, sec) {
   let n = 0;
   const gradient = () => {
     updategradient(imin, isec, min, sec, n);
-    n = n%100 + 1
+    n = (n + 1)%100;
   };
   gradientID = setInterval(gradient, 10);
   gradient();
@@ -140,10 +160,19 @@ function clickHandler() {
       questions = 0;
       numbox.value = 0;
     }
+    questions = parseInt(questions);
+    let totalbox = document.getElementById("total");
+    let total = totalbox.value;
+    if (total === "") {
+      total = questions;
+      totalbox.value = questions;
+    }
+    total = parseInt(total);
+    console.log(questions, total-questions)
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
       chrome.tabs.sendMessage(tabs[0].id, {
         action: "start",
-        data: questions,
+        data: [questions, total - questions],
       });
     });
     if (document.getElementById("SaveScore").checked) {
@@ -155,17 +184,25 @@ function clickHandler() {
 }
 
 function inputHandler() {
-  let warning = document.getElementById("warning");
   let value = document.getElementById("number").value;
   if (value > 999) {
-    warning.style.display = "inline";
+    badnum [0]= 1;
+    numWarnings();
   } else if (value <= 999) {
-    warning.style.display = "none";
+    badnum[0] = 0;
+    numWarnings();
   }
+  checkRatio();
 }
 
 function clickListen() {
   document.getElementById("number").addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+      clickHandler();
+      event.preventDefault();
+    }
+  });
+  document.getElementById("total").addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
       clickHandler();
       event.preventDefault();
@@ -200,17 +237,51 @@ function checkTime() {
   let warning = document.getElementById("timewarning");
   if ((timewarning[0] || timewarning[1]) && timewarning[2]) {
     warning.style.display = "inline";
-    nogo = 1;
+    nogos[0] = 1;
+    nogo = (nogos[0] || nogos[1]);
   } else {
     warning.style.display = "none";
-    nogo = 0;
+    nogos[0] = 0;
+    nogo = (nogos[0] || nogos[1]);
   }
   checkgrey();
 }
 
+function checkRatio() {
+  let firstBox = document.getElementById("number");
+  let extraBox = document.getElementById("total");
+  if (parseInt(firstBox.value) > parseInt(extraBox.value)) {
+    badnum[1] = 1;
+    nogos[1] = 1;
+    nogo = (nogos[0] || nogos[1]);
+    numWarnings();
+  } else {
+    badnum[1] = 0;
+    nogos[1] = 0;
+    nogo = (nogos[0] || nogos[1]);
+    numWarnings();
+  }
+  checkgrey();
+}
+
+function numWarnings() {
+  let ratioWarning = document.getElementById("totalwarning");
+  let numWarning = document.getElementById("warning");
+  if (badnum[1]) {
+    ratioWarning.style.display = "inline";
+    numWarning.style.display = "none";
+  } else if (badnum[0]) {
+    ratioWarning.style.display = "none";
+    numWarning.style.display = "inline";
+  } else {
+    ratioWarning.style.display = "none";
+    numWarning.style.display = "none";
+  }
+}
+
 function checkListen() {
-  let label = document.getElementById("SaveLabel")
-  let time = document.getElementById("timerbox")
+  let label = document.getElementById("SaveLabel");
+  let time = document.getElementById("timerbox");
   document.getElementById("SaveScore").addEventListener('change', function() {
     if (this.checked) {
       label.style.color = "black";
@@ -227,6 +298,33 @@ function checkListen() {
       }
     }
     checkTime();
+  });
+}
+
+function totalListen() {
+  let firstBox = document.getElementById("number");
+  let extraBox = document.getElementById("total");
+  let separator = document.getElementById("separator");
+  let label = document.getElementById("totalLabel");
+  document.getElementById("getTotal").addEventListener('change', function() {
+    if (this.checked) {
+      firstBox.style.margin = "0px 4.5px";
+      extraBox.style.margin = "0px 4.5px";
+      label.style.color = "black";
+      extraBox.style.display = "inline";
+      firstBox.style.width = "63px";
+      firstBox.placeholder = "Correct"
+      separator.style.display = "inline";
+    } else {
+      firstBox.style.margin = "auto";
+      extraBox.style.margin = "auto";
+      label.style.color = "#5f6367";
+      extraBox.style.display = "none";
+      firstBox.style.width = "auto";
+      firstBox.placeholder = "Number of Questions"
+      separator.style.display = "none";
+    }
+    checkRatio();
   });
 }
 
@@ -270,7 +368,10 @@ document.addEventListener("DOMContentLoaded", function () {
   min.addEventListener("input", minHandler);
   let sec = document.getElementById("sec");
   sec.addEventListener("input", secHandler);
+  let total = document.getElementById("total");
+  total.addEventListener("input", checkRatio);
   clickListen();
   checkListen();
+  totalListen();
   restrictInput();
 });

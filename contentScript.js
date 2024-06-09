@@ -5867,8 +5867,9 @@ let totalQuestions = 0;
 
 chrome.runtime.onMessage.addListener(async function (request) {
   if (request.action === "start") {
-    let questions = parseInt(request.data);
-    totalQuestions += questions;
+    let correct = request.data[0];
+    let wrong = request.data[1];
+    totalQuestions += correct + wrong;
     let block = getElementByXpath("/html/body/x-modal[4]");
     if (block.style.display == "flex") {
       let timerSwitch = getElementByXpath("/html/body/x-modal[4]/div/div[2]/div[1]/div[1]/input");
@@ -5882,7 +5883,12 @@ chrome.runtime.onMessage.addListener(async function (request) {
     } else {
       clicked = 0;
     }
-    for (let i = 0; i < questions; i++) {
+    for (let i = 0; i < wrong; i++) {
+      let input = document.getElementById("answer-input");
+      input.value = i;
+      submit(input);
+    }
+    for (let i = 0; i < correct; i++) {
       let input = document.getElementById("answer-input");
       let pronoun = document.getElementById("pronoun-input").textContent;
       let pos = document.getElementById("tense-input").textContent;
