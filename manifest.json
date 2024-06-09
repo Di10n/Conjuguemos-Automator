@@ -1,6 +1,6 @@
 {
   "name": "Conjuguemos Automator",
-  "version": "2.0",
+  "version": "2.1",
   "description": "Automatically complete Conjuguemos.",
   "manifest_version": 3,
   "host_permissions": ["https://conjuguemos.com/verb/homework/*"],
