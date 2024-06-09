@@ -321,7 +321,7 @@ function totalListen() {
       label.style.color = "#5f6367";
       extraBox.style.display = "none";
       firstBox.style.width = "auto";
-      firstBox.placeholder = "Number of Questions"
+      firstBox.placeholder = "Questions Correct"
       separator.style.display = "none";
     }
     checkRatio();
