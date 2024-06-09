@@ -185,10 +185,11 @@ function clickHandler() {
 
 function inputHandler() {
   let value = document.getElementById("number").value;
-  if (value > 999) {
-    badnum [0]= 1;
+  let total = document.getElementById("total").value;
+  if (value > 999 || total > 999) {
+    badnum[0] = 1;
     numWarnings();
-  } else if (value <= 999) {
+  } else if (value <= 999 && total <= 999) {
     badnum[0] = 0;
     numWarnings();
   }
@@ -369,7 +370,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let sec = document.getElementById("sec");
   sec.addEventListener("input", secHandler);
   let total = document.getElementById("total");
-  total.addEventListener("input", checkRatio);
+  total.addEventListener("input", inputHandler);
   clickListen();
   checkListen();
   totalListen();
